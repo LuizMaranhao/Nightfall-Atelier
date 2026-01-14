@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Nightfall Atelier - Bazaar Edition</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="ui-layer">
+        <div id="xp-container"><div id="xp-bar"></div></div>
+        <div id="hp-container"><div id="hp-bar"></div></div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="selection-screen">
+        <h1 class="title">NIGHTFALL ATELIER</h1>
+        <div class="cards-container">
+            <div class="class-card" onclick="selectClass('mago')">
+                <div class="card-icon">🧙‍♂️</div>
+                <h2>MAGO</h2>
+                <p>Mestre das artes arcanas.</p>
+            </div>
+            <div class="class-card" onclick="selectClass('arqueiro')">
+                <div class="card-icon">🏹</div>
+                <h2>ARQUEIRO</h2>
+                <p>Velocidade e precisão.</p>
+            </div>
+            <div class="class-card" onclick="selectClass('guerreiro')">
+                <div class="card-icon">🛡️</div>
+                <h2>GUERREIRO</h2>
+                <p>Resistência inabalável.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="upgrade-screen" style="display: none;">
+        <h1 class="upgrade-title">MELHORIA DISPONÍVEL</h1>
+        <div id="upgrade-cards-container" class="cards-container"></div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="game.js"></script>
+</body>
+</html>
+
+
+
+
+
