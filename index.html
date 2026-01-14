@@ -2,46 +2,290 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Nightfall Atelier - Bazaar Edition</title>
+    <title>Castle of the Ancients</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=MedievalSharp&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Interface do Jogo -->
     <div id="ui-layer">
-        <div id="xp-container"><div id="xp-bar"></div></div>
-        <div id="hp-container"><div id="hp-bar"></div></div>
-    </div>
-
-    <canvas id="gameCanvas"></canvas>
-
-    <div id="selection-screen">
-        <h1 class="title">NIGHTFALL ATELIER</h1>
-        <div class="cards-container">
-            <div class="class-card" onclick="selectClass('mago')">
-                <div class="card-icon">🧙‍♂️</div>
-                <h2>MAGO</h2>
-                <p>Mestre das artes arcanas.</p>
+        <div id="status-container">
+            <div id="status-text">
+                <i class="fas fa-crown"></i> LVL <span id="level">01</span>
             </div>
-            <div class="class-card" onclick="selectClass('arqueiro')">
-                <div class="card-icon">🏹</div>
-                <h2>ARQUEIRO</h2>
-                <p>Velocidade e precisão.</p>
+            <div id="class-name">ESCOLHA UMA CLASSE</div>
+        </div>
+        
+        <div class="stat-bar">
+            <div class="stat-label">
+                <i class="fas fa-heart"></i> VIDA
             </div>
-            <div class="class-card" onclick="selectClass('guerreiro')">
-                <div class="card-icon">🛡️</div>
-                <h2>GUERREIRO</h2>
-                <p>Resistência inabalável.</p>
+            <div id="hp-container">
+                <div id="hp-bar"></div>
+                <span id="hp-text">100/100</span>
+            </div>
+        </div>
+        
+        <div class="stat-bar">
+            <div class="stat-label">
+                <i class="fas fa-star"></i> EXPERIÊNCIA
+            </div>
+            <div id="xp-container">
+                <div id="xp-bar"></div>
+                <span id="xp-text">0/100</span>
+            </div>
+        </div>
+        
+        <div id="stats-panel">
+            <div class="stat-item">
+                <i class="fas fa-skull-crossbones"></i>
+                <span>Abatidos: <strong id="kill-count">0</strong></span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-gem"></i>
+                <span>Ouro: <strong id="gold-count">0</strong></span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-wave-square"></i>
+                <span>Onda: <strong id="wave-count">1</strong></span>
             </div>
         </div>
     </div>
 
-    <div id="upgrade-screen" style="display: none;">
-        <h1 class="upgrade-title">MELHORIA DISPONÍVEL</h1>
-        <div id="upgrade-cards-container" class="cards-container"></div>
+    <!-- Canvas do Jogo -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Efeitos de cenário -->
+    <div class="castle-columns"></div>
+    <div class="stained-glass-effect"></div>
+    <div class="atmosphere-overlay"></div>
+
+    <!-- Mira -->
+    <div id="crosshair">
+        <div class="crosshair-dot"></div>
+        <div class="crosshair-circle"></div>
     </div>
 
+    <!-- Controlador de música -->
+    <div class="music-control" onclick="toggleMusic()">
+        <i class="fas fa-volume-up"></i>
+        <i class="fas fa-volume-mute"></i>
+    </div>
+
+    <!-- Controlador de efeitos sonoros -->
+    <div class="sfx-control" onclick="toggleSFX()">
+        <i class="fas fa-volume-up"></i>
+        <i class="fas fa-volume-mute"></i>
+    </div>
+
+    <!-- Tela de Seleção -->
+    <div id="selection-screen">
+        <div class="castle-banner">
+            <h1 class="title">CASTLE OF THE ANCIENTS</h1>
+            <div class="banner-divider">
+                <div class="divider-left"></div>
+                <i class="fas fa-shield-alt"></i>
+                <div class="divider-right"></div>
+            </div>
+            <p class="subtitle">Defenda o reino das sombras que se aproximam</p>
+        </div>
+        
+        <div class="class-selection">
+            <h2><i class="fas fa-chess-knight"></i> ESCOLHA SEU CAMPEÃO</h2>
+            
+            <div class="cards-container">
+                <div class="class-card" onclick="selectClass('paladino')">
+                    <div class="card-header">
+                        <div class="card-icon">🛡️</div>
+                        <div class="card-glow"></div>
+                    </div>
+                    <h3>PALADINO</h3>
+                    <p class="card-desc">Cavaleiro sagrado da luz, portador da justiça divina</p>
+                    <div class="card-stats">
+                        <div><i class="fas fa-heart"></i> <span>120 HP</span></div>
+                        <div><i class="fas fa-fist-raised"></i> <span>40 DANO</span></div>
+                        <div><i class="fas fa-shield-alt"></i> <span>ALTA DEFESA</span></div>
+                    </div>
+                    <div class="card-ability">
+                        <i class="fas fa-sun"></i> Golpes Sagrados
+                    </div>
+                </div>
+                
+                <div class="class-card" onclick="selectClass('arqueiro')">
+                    <div class="card-header">
+                        <div class="card-icon">🏹</div>
+                        <div class="card-glow"></div>
+                    </div>
+                    <h3>ARQUEIRO ÉLFICO</h3>
+                    <p class="card-desc">Mestre das flechas, precisão letal das florestas</p>
+                    <div class="card-stats">
+                        <div><i class="fas fa-heart"></i> <span>90 HP</span></div>
+                        <div><i class="fas fa-fist-raised"></i> <span>35 DANO</span></div>
+                        <div><i class="fas fa-bullseye"></i> <span>ATAQUE RÁPIDO</span></div>
+                    </div>
+                    <div class="card-ability">
+                        <i class="fas fa-eye"></i> Precisão Infalível
+                    </div>
+                </div>
+                
+                <div class="class-card" onclick="selectClass('mago')">
+                    <div class="card-header">
+                        <div class="card-icon">🔮</div>
+                        <div class="card-glow"></div>
+                    </div>
+                    <h3>MAGO DO CAOS</h3>
+                    <p class="card-desc">Senhor das artes arcanas, manipulador da realidade</p>
+                    <div class="card-stats">
+                        <div><i class="fas fa-heart"></i> <span>80 HP</span></div>
+                        <div><i class="fas fa-fist-raised"></i> <span>45 DANO</span></div>
+                        <div><i class="fas fa-magic"></i> <span>ATAQUE EM ÁREA</span></div>
+                    </div>
+                    <div class="card-ability">
+                        <i class="fas fa-fire"></i> Esferas do Caos
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls-info">
+            <div class="control-group">
+                <div class="control">
+                    <span class="key">W A S D</span>
+                    <span class="action">Movimentar</span>
+                </div>
+                <div class="control">
+                    <span class="key">CLIQUE</span>
+                    <span class="action">Atacar</span>
+                </div>
+                <div class="control">
+                    <span class="key">ESPAÇO</span>
+                    <span class="action">Atacar</span>
+                </div>
+                <div class="control">
+                    <span class="key">M</span>
+                    <span class="action">Música</span>
+                </div>
+                <div class="control">
+                    <span class="key">N</span>
+                    <span class="action">Efeitos</span>
+                </div>
+            </div>
+            <p class="lore-text">
+                <i class="fas fa-scroll"></i> A escuridão consome o reino. Monstros das trevas emergem das profundezas. 
+                Apenas um herói pode detê-los. Sua lenda começa agora.
+            </p>
+        </div>
+    </div>
+
+    <!-- Tela de Upgrade -->
+    <div id="upgrade-screen">
+        <div class="upgrade-modal">
+            <div class="upgrade-header">
+                <h2><i class="fas fa-level-up-alt"></i> EVOLUÇÃO DO HERÓI</h2>
+                <p class="upgrade-subtitle">Nível <span id="current-level">1</span> conquistado! Escolha uma benção:</p>
+            </div>
+            
+            <div class="upgrade-cards">
+                <div class="upgrade-card" onclick="selectUpgrade('vitality')">
+                    <div class="upgrade-icon">❤️</div>
+                    <h4>VITALIDADE SAGRADA</h4>
+                    <p class="card-desc">+25 Pontos de Vida Máxima</p>
+                    <div class="upgrade-effect">
+                        <i class="fas fa-heartbeat"></i> Cura completamente
+                    </div>
+                </div>
+                
+                <div class="upgrade-card" onclick="selectUpgrade('power')">
+                    <div class="upgrade-icon">⚔️</div>
+                    <h4>FORÇA DO GIGANTE</h4>
+                    <p class="card-desc">+20 Poder de Ataque</p>
+                    <div class="upgrade-effect">
+                        <i class="fas fa-bolt"></i> Dano aumentado
+                    </div>
+                </div>
+                
+                <div class="upgrade-card" onclick="selectUpgrade('celerity')">
+                    <div class="upgrade-icon">⚡</div>
+                    <h4>AGILIDADE DO VENTO</h4>
+                    <p class="card-desc">+0.8 Velocidade de Movimento</p>
+                    <div class="upgrade-effect">
+                        <i class="fas fa-wind"></i> Movimento ágil
+                    </div>
+                </div>
+            </div>
+            
+            <button class="skip-btn" onclick="skipUpgrade()">
+                <i class="fas fa-forward"></i> Continuar sem benção
+            </button>
+        </div>
+    </div>
+
+    <!-- Tela de Game Over -->
+    <div id="gameover-screen">
+        <div class="gameover-modal">
+            <div class="gameover-header">
+                <h2><i class="fas fa-skull"></i> FIM DA JORNADA</h2>
+                <p class="gameover-subtitle">O herói caiu, mas sua lenda permanecerá</p>
+            </div>
+            
+            <div class="trophy-case">
+                <div class="trophy">
+                    <i class="fas fa-crown"></i>
+                    <div class="trophy-label">NÍVEL MÁXIMO</div>
+                    <div class="trophy-value" id="final-level">1</div>
+                </div>
+                <div class="trophy">
+                    <i class="fas fa-skull-crossbones"></i>
+                    <div class="trophy-label">CRIATURAS ABATIDAS</div>
+                    <div class="trophy-value" id="final-kills">0</div>
+                </div>
+                <div class="trophy">
+                    <i class="fas fa-coins"></i>
+                    <div class="trophy-label">TESOURO CONQUISTADO</div>
+                    <div class="trophy-value" id="final-gold">0</div>
+                </div>
+                <div class="trophy">
+                    <i class="fas fa-flag"></i>
+                    <div class="trophy-label">ONDAS SOBREVIVIDAS</div>
+                    <div class="trophy-value" id="final-wave">1</div>
+                </div>
+            </div>
+            
+            <div class="hero-memorial">
+                <div class="hero-class" id="final-class">-</div>
+                <p>"A coragem não é a ausência do medo, mas a determinação de avançar apesar dele."</p>
+            </div>
+            
+            <button class="restart-btn" onclick="restartGame()">
+                <i class="fas fa-redo"></i> INICIAR NOVA JORNADA
+            </button>
+        </div>
+    </div>
+
+    <!-- Áudios simplificados com fontes confiáveis -->
     <audio id="bgMusic" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-medieval-showdown-829.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="shootSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-arrow-whoosh-1460.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="hitSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-sword-slash-1498.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="levelUpSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="monsterDeathSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-creature-cry-of-hurt-2208.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="gameOverSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-sad-game-over-trombone-471.mp3" type="audio/mpeg">
     </audio>
 
     <script src="game.js"></script>
